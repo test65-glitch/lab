@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>이차함수 그래프 변화 탐구</title>
+<style>
+  :root{
+    --bg:#f7f9fc;
+    --panel:#ffffff;
+    --ink:#132238;
+    --sub:#4a5b75;
+    --accent:#2b6cff;
+    --accent2:#ff7a18;
+    --grid:#d9e2f0;
+    --axis:#4b5a70;
+    --good:#138a36;
+    --warn:#b45309;
+    --shadow:0 10px 25px rgba(19,34,56,0.08);
+    --radius:18px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+    background:linear-gradient(180deg,#eef4ff 0%, var(--bg) 100%);
+    color:var(--ink);
+  }
+  .wrap{
+    max-width:1280px;
+    margin:0 auto;
+    padding:18px;
+  }
+  h1{
+    font-size:clamp(1.7rem, 2.5vw, 2.7rem);
+    margin:0 0 10px 0;
+    line-height:1.2;
+  }
+  .subtitle{
+    font-size:clamp(1rem, 1.6vw, 1.2rem);
+    color:var(--sub);
+    margin-bottom:16px;
+  }
+  .layout{
+    display:grid;
+    grid-template-columns: 360px 1fr;
+    gap:18px;
+  }
+  .card{
+    background:var(--panel);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    padding:18px;
+  }
+  .controls{
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+  }
+  .equationBox{
+    background:#f0f5ff;
+    border:2px solid #d8e4ff;
+    border-radius:16px;
+    padding:16px;
+  }
+  .equationTitle{
+    font-size:clamp(1rem,1.8vw,1.2rem);
+    color:var(--sub);
+    margin-bottom:8px;
+  }
+  .equation{
+    font-weight:800;
+    font-size:clamp(1.5rem,2.6vw,2.2rem);
+    line-height:1.25;
+    color:#0d2b6b;
+    word-break:keep-all;
+  }
+  .control{
+    border:2px solid #e8edf6;
+    border-radius:16px;
+    padding:14px;
+    background:#fbfdff;
+  }
+  .controlHead{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:8px;
+    margin-bottom:10px;
+  }
+  .label{
+    font-size:clamp(1.1rem,1.8vw,1.25rem);
+    font-weight:700;
+  }
+  .desc{
+    font-size:clamp(0.95rem,1.4vw,1rem);
+    color:var(--sub);
+    margin-top:4px;
+  }
+  .value{
+    min-width:72px;
+    text-align:center;
+    font-weight:800;
+    font-size:clamp(1.1rem,1.8vw,1.25rem);
+    color:var(--accent);
+    background:#edf3ff;
+    border-radius:999px;
+    padding:6px 10px;
+  }
+  input[type="range"]{
+    width:100%;
+    height:14px;
+    accent-color:var(--accent);
+    cursor:pointer;
+  }
+  .btnRow{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  button{
+    border:none;
+    border-radius:14px;
+    padding:14px 18px;
+    font-size:clamp(1rem,1.7vw,1.1rem);
+    font-weight:800;
+    cursor:pointer;
+    transition:transform .05s ease, opacity .2s ease, background .2s ease;
+  }
+  button:active{ transform:scale(0.98); }
+  .resetBtn{
+    background:var(--accent);
+    color:white;
+  }
+  .sampleBtn{
+    background:#eef3fb;
+    color:var(--ink);
+  }
+  .graphArea{
+    display:grid;
+    grid-template-rows:auto 1fr auto;
+    gap:12px;
+  }
+  .graphTitle{
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .graphTitle h2{
+    margin:0;
+    font-size:clamp(1.25rem,2vw,1.6rem);
+  }
+  .legend{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px 14px;
+    color:var(--sub);
+    font-size:clamp(0.95rem,1.4vw,1rem);
+  }
+  .legendItem{
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .dot{
+    width:14px;height:14px;border-radius:50%;
+    display:inline-block;
+  }
+  .canvasWrap{
+    background:white;
+    border:2px solid #e6edf8;
+    border-radius:18px;
+    padding:10px;
+  }
+  canvas{
+    width:100%;
+    height:min(68vh, 620px);
+    display:block;
+    border-radius:12px;
+    background:#fcfdff;
+  }
+  .infoGrid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:12px;
+  }
+  .info{
+    background:#f7faff;
+    border:2px solid #e8eef8;
+    border-radius:16px;
+    padding:12px;
+    min-height:92px;
+  }
+  .info .k{
+    color:var(--sub);
+    font-size:clamp(0.95rem,1.3vw,1rem);
+    margin-bottom:6px;
+  }
+  .info .v{
+    font-weight:800;
+    font-size:clamp(1.05rem,1.8vw,1.25rem);
+    line-height:1.3;
+  }
+  .conceptBox{
+    margin-top:10px;
+    background:#fff9ed;
+    border:2px solid #ffe0a8;
+    border-radius:16px;
+    padding:14px;
+  }
+  .conceptTitle{
+    font-weight:900;
+    color:#8a5200;
+    margin-bottom:8px;
+    font-size:clamp(1.05rem,1.7vw,1.15rem);
+  }
+  .conceptText{
+    font-size:clamp(1rem,1.55vw,1.08rem);
+    line-height:1.55;
+  }
+  .small{
+    font-size:clamp(0.93rem,1.2vw,0.98rem);
+    color:var(--sub);
+  }
+  @media (max-width: 980px){
+    .layout{ grid-template-columns:1fr; }
+    .infoGrid{ grid-template-columns:repeat(2,1fr); }
+  }
+  @media (max-width: 620px){
+    .wrap{ padding:12px; }
+    .card{ padding:14px; }
+    .infoGrid{ grid-template-columns:1fr; }
+    canvas{ height:52vh; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>이차함수 그래프 변화 탐구</h1>
+    <div class="subtitle">식 <strong>y = ax² + bx + c</strong>의 <strong>a, b, c</strong>를 바꾸며 그래프가 어떻게 달라지는지 직접 확인해 보세요.</div>
+
+    <div class="layout">
+      <section class="card controls" aria-label="조작 영역">
+        <div class="equationBox">
+          <div class="equationTitle">현재 이차함수 식</div>
+          <div class="equation" id="equationText">y = x²</div>
+          <div class="small" style="margin-top:8px;">슬라이더를 움직이면 식과 그래프가 즉시 바뀝니다.</div>
+        </div>
+
+        <div class="control">
+          <div class="controlHead">
+            <div>
+              <div class="label">a: 이차항의 계수</div>
+              <div class="desc">그래프의 방향과 폭이 달라집니다.</div>
+            </div>
+            <div class="value" id="aValue">1</div>
+          </div>
+          <input id="aSlider" type="range" min="-5" max="5" step="0.1" value="1" />
+        </div>
+
+        <div class="control">
+          <div class="controlHead">
+            <div>
+              <div class="label">b: 일차항의 계수</div>
+              <div class="desc">꼭짓점의 위치가 달라집니다.</div>
+            </div>
+            <div class="value" id="bValue">0</div>
+          </div>
+          <input id="bSlider" type="range" min="-10" max="10" step="0.1" value="0" />
+        </div>
+
+        <div class="control">
+          <div class="controlHead">
+            <div>
+              <div class="label">c: 상수항</div>
+              <div class="desc">y절편이 달라집니다.</div>
+            </div>
+            <div class="value" id="cValue">0</div>
+          </div>
+          <input id="cSlider" type="range" min="-10" max="10" step="0.1" value="0" />
+        </div>
+
+        <div class="btnRow">
+          <button class="resetBtn" id="resetBtn">다시 시작</button>
+          <button class="sampleBtn" data-sample="1,-4,3">예시 1</button>
+          <button class="sampleBtn" data-sample="-1,2,1">예시 2</button>
+          <button class="sampleBtn" data-sample="0.5,0,-4">예시 3</button>
+        </div>
+
+        <div class="conceptBox">
+          <div class="conceptTitle">확인할 개념</div>
+          <div class="conceptText" id="conceptText">
+            <strong>a</strong>는 이차항의 계수, <strong>b</strong>는 일차항의 계수, <strong>c</strong>는 상수항입니다.
+            슬라이더를 움직이며 그래프가 어떻게 바뀌는지 찾아보세요.
+          </div>
+        </div>
+      </section>
+
+      <section class="card graphArea" aria-label="그래프 영역">
+        <div class="graphTitle">
+          <h2>좌표평면과 그래프</h2>
+          <div class="legend">
+            <div class="legendItem"><span class="dot" style="background:#2b6cff;"></span>이차함수 그래프</div>
+            <div class="legendItem"><span class="dot" style="background:#ff7a18;"></span>꼭짓점</div>
+            <div class="legendItem"><span class="dot" style="background:#138a36;"></span>y절편</div>
+          </div>
+        </div>
+
+        <div class="canvasWrap">
+          <canvas id="graphCanvas"></canvas>
+        </div>
+
+        <div class="infoGrid">
+          <div class="info">
+            <div class="k">꼭짓점</div>
+            <div class="v" id="vertexText">계산 중</div>
+          </div>
+          <div class="info">
+            <div class="k">축의 방정식</div>
+            <div class="v" id="axisText">계산 중</div>
+          </div>
+          <div class="info">
+            <div class="k">y절편</div>
+            <div class="v" id="yInterceptText">계산 중</div>
+          </div>
+          <div class="info">
+            <div class="k">그래프 모양</div>
+            <div class="v" id="shapeText">계산 중</div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+<script>
+(function(){
+  const canvas = document.getElementById('graphCanvas');
+  const ctx = canvas.getContext('2d');
+
+  const aSlider = document.getElementById('aSlider');
+  const bSlider = document.getElementById('bSlider');
+  const cSlider = document.getElementById('cSlider');
+
+  const aValue = document.getElementById('aValue');
+  const bValue = document.getElementById('bValue');
+  const cValue = document.getElementById('cValue');
+
+  const equationText = document.getElementById('equationText');
+  const vertexText = document.getElementById('vertexText');
+  const axisText = document.getElementById('axisText');
+  const yInterceptText = document.getElementById('yInterceptText');
+  const shapeText = document.getElementById('shapeText');
+  const conceptText = document.getElementById('conceptText');
+
+  const resetBtn = document.getElementById('resetBtn');
+  const sampleBtns = [...document.querySelectorAll('.sampleBtn')];
+
+  const view = {
+    xMin: -10,
+    xMax: 10,
+    yMin: -10,
+    yMax: 10
+  };
+
+  function resizeCanvas(){
+    const rect = canvas.getBoundingClientRect();
+    const ratio = window.devicePixelRatio || 1;
+    canvas.width = Math.round(rect.width * ratio);
+    canvas.height = Math.round(rect.height * ratio);
+    ctx.setTransform(ratio,0,0,ratio,0,0);
+    draw();
+  }
+
+  function fmt(n){
+    const rounded = Math.round(n * 100) / 100;
+    if (Math.abs(rounded) < 1e-10) return "0";
+    return Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(2).replace(/\.?0+$/,'');
+  }
+
+  function signedTerm(value, variablePart){
+    if (Math.abs(value) < 1e-10) return "";
+    const sign = value > 0 ? " + " : " - ";
+    const abs = Math.abs(value);
+    let coef = "";
+    if (variablePart){
+      coef = Math.abs(abs - 1) < 1e-10 ? "" : fmt(abs);
+      return sign + coef + variablePart;
+    }
+    return sign + fmt(abs);
+  }
+
+  function makeEquation(a,b,c){
+    let text = "y = ";
+    if (Math.abs(a) < 1e-10){
+      text += "0x²";
+    }else{
+      if (a === 1) text += "x²";
+      else if (a === -1) text += "-x²";
+      else text += fmt(a) + "x²";
+    }
+    text += signedTerm(b, "x");
+    text += signedTerm(c, "");
+    return text.replace("y = 0x²", "y = 0x²");
+  }
+
+  function getValues(){
+    return {
+      a: parseFloat(aSlider.value),
+      b: parseFloat(bSlider.value),
+      c: parseFloat(cSlider.value)
+    };
+  }
+
+  function xToPx(x, w, pad){
+    return pad + (x - view.xMin) / (view.xMax - view.xMin) * (w - 2*pad);
+  }
+  function yToPx(y, h, pad){
+    return h - pad - (y - view.yMin) / (view.yMax - view.yMin) * (h - 2*pad);
+  }
+  function pxToX(px, w, pad){
+    return view.xMin + (px - pad) / (w - 2*pad) * (view.xMax - view.xMin);
+  }
+
+  function drawGrid(w,h,pad){
+    ctx.clearRect(0,0,w,h);
+    ctx.save();
+
+    for(let x = Math.ceil(view.xMin); x <= Math.floor(view.xMax); x++){
+      const px = xToPx(x,w,pad);
+      ctx.beginPath();
+      ctx.lineWidth = x === 0 ? 2.2 : 1;
+      ctx.strokeStyle = x === 0 ? "#4b5a70" : "#d9e2f0";
+      ctx.moveTo(px,pad);
+      ctx.lineTo(px,h-pad);
+      ctx.stroke();
+    }
+
+    for(let y = Math.ceil(view.yMin); y <= Math.floor(view.yMax); y++){
+      const py = yToPx(y,h,pad);
+      ctx.beginPath();
+      ctx.lineWidth = y === 0 ? 2.2 : 1;
+      ctx.strokeStyle = y === 0 ? "#4b5a70" : "#d9e2f0";
+      ctx.moveTo(pad,py);
+      ctx.lineTo(w-pad,py);
+      ctx.stroke();
+    }
+
+    ctx.fillStyle = "#4a5b75";
+    ctx.font = "bold 14px system-ui, sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+    for(let x = Math.ceil(view.xMin); x <= Math.floor(view.xMax); x++){
+      if(x === 0) continue;
+      const px = xToPx(x,w,pad);
+      const py0 = yToPx(0,h,pad);
+      if(py0 >= pad && py0 <= h-pad-16){
+        ctx.fillText(String(x), px, py0 + 6);
+      }else{
+        ctx.fillText(String(x), px, h - pad + 4);
+      }
+    }
+
+    ctx.textAlign = "right";
+    ctx.textBaseline = "middle";
+    for(let y = Math.ceil(view.yMin); y <= Math.floor(view.yMax); y++){
+      if(y === 0) continue;
+      const py = yToPx(y,h,pad);
+      const px0 = xToPx(0,w,pad);
+      if(px0 >= pad+24 && px0 <= w-pad){
+        ctx.fillText(String(y), px0 - 8, py);
+      }else{
+        ctx.fillText(String(y), pad - 6, py);
+      }
+    }
+
+    ctx.fillStyle = "#132238";
+    ctx.font = "bold 16px system-ui, sans-serif";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "bottom";
+    ctx.fillText("y", xToPx(0,w,pad)+8, pad-4);
+    ctx.textAlign = "right";
+    ctx.fillText("x", w-pad+18, yToPx(0,h,pad)-8);
+
+    ctx.fillStyle = "#4a5b75";
+    ctx.font = "bold 13px system-ui, sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText("단위: x축 1칸 = 1, y축 1칸 = 1", pad, h - 8);
+
+    ctx.restore();
+  }
+
+  function drawFunction(a,b,c,w,h,pad){
+    ctx.save();
+
+    if (Math.abs(a) > 1e-10){
+      const xv = -b/(2*a);
+      if (xv >= view.xMin && xv <= view.xMax){
+        const px = xToPx(xv,w,pad);
+        ctx.setLineDash([8,6]);
+        ctx.strokeStyle = "rgba(255,122,24,0.7)";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(px,pad);
+        ctx.lineTo(px,h-pad);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+    }
+
+    ctx.beginPath();
+    let started = false;
+    for(let px = pad; px <= w-pad; px += 1){
+      const x = pxToX(px,w,pad);
+      const y = a*x*x + b*x + c;
+      const py = yToPx(y,h,pad);
+      if(!started){
+        ctx.moveTo(px, py);
+        started = true;
+      }else{
+        ctx.lineTo(px, py);
+      }
+    }
+    ctx.strokeStyle = "#2b6cff";
+    ctx.lineWidth = 3.5;
+    ctx.stroke();
+
+    const yi = c;
+    if(yi >= view.yMin && yi <= view.yMax){
+      const px = xToPx(0,w,pad);
+      const py = yToPx(yi,h,pad);
+      ctx.fillStyle = "#138a36";
+      ctx.beginPath();
+      ctx.arc(px, py, 6, 0, Math.PI*2);
+      ctx.fill();
+      ctx.font = "bold 15px system-ui, sans-serif";
+      ctx.fillText("(0, " + fmt(yi) + ")", px + 10, py - 10);
+    }
+
+    if (Math.abs(a) > 1e-10){
+      const xv = -b/(2*a);
+      const yv = a*xv*xv + b*xv + c;
+      if(xv >= view.xMin && xv <= view.xMax && yv >= view.yMin && yv <= view.yMax){
+        const px = xToPx(xv,w,pad);
+        const py = yToPx(yv,h,pad);
+        ctx.fillStyle = "#ff7a18";
+        ctx.beginPath();
+        ctx.arc(px, py, 7, 0, Math.PI*2);
+        ctx.fill();
+        ctx.font = "bold 15px system-ui, sans-serif";
+        ctx.fillText("(" + fmt(xv) + ", " + fmt(yv) + ")", px + 10, py - 12);
+      }
+    }
+
+    ctx.restore();
+  }
+
+  function updateInfo(a,b,c){
+    equationText.textContent = makeEquation(a,b,c);
+    aValue.textContent = fmt(a);
+    bValue.textContent = fmt(b);
+    cValue.textContent = fmt(c);
+
+    const yi = c;
+    yInterceptText.textContent = "(0, " + fmt(yi) + ")";
+
+    if (Math.abs(a) < 1e-10){
+      vertexText.textContent = "a는 0이 아니어야 함";
+      axisText.textContent = "이차함수 아님";
+      shapeText.textContent = "포물선이 아님";
+      conceptText.innerHTML =
+        "<strong>a</strong>가 0이면 식은 이차함수가 아닙니다. " +
+        "이 활동에서는 <strong>a ≠ 0</strong>일 때 포물선 그래프를 살펴보세요.";
+      return;
+    }
+
+    const xv = -b / (2*a);
+    const yv = a*xv*xv + b*xv + c;
+    vertexText.textContent = "(" + fmt(xv) + ", " + fmt(yv) + ")";
+    axisText.textContent = "x = " + fmt(xv);
+
+    let shape = "";
+    shape += a > 0 ? "위로 열린 포물선" : "아래로 열린 포물선";
+    shape += Math.abs(a) > 1 ? " · 더 좁음" : (Math.abs(a) < 1 ? " · 더 넓음" : " · 기준 폭");
+    shapeText.textContent = shape;
+
+    let msg = "";
+    msg += "<strong>a</strong> = " + fmt(a) + " 이므로 ";
+    msg += a > 0 ? "그래프가 <strong>위로</strong> 열립니다. " : "그래프가 <strong>아래로</strong> 열립니다. ";
+    msg += Math.abs(a) > 1 ? "또한 |a|가 1보다 커서 그래프가 <strong>더 좁아집니다</strong>. " :
+           Math.abs(a) < 1 ? "또한 0과 1 사이여서 그래프가 <strong>더 넓어집니다</strong>. " :
+           "또한 |a|=1이라 기본 모양의 폭입니다. ";
+
+    msg += "<strong>b</strong> = " + fmt(b) + " 이므로 꼭짓점과 축의 위치가 바뀝니다. ";
+    msg += "현재 축은 <strong>x = " + fmt(xv) + "</strong>입니다. ";
+
+    msg += "<strong>c</strong> = " + fmt(c) + " 이므로 y절편은 <strong>(0, " + fmt(c) + ")</strong>입니다.";
+    conceptText.innerHTML = msg;
+  }
+
+  function draw(){
+    const {a,b,c} = getValues();
+    updateInfo(a,b,c);
+
+    const w = canvas.clientWidth;
+    const h = canvas.clientHeight;
+    const pad = Math.max(38, Math.min(60, Math.round(w * 0.055)));
+
+    drawGrid(w,h,pad);
+    drawFunction(a,b,c,w,h,pad);
+  }
+
+  function setValues(a,b,c){
+    aSlider.value = a;
+    bSlider.value = b;
+    cSlider.value = c;
+    draw();
+  }
+
+  [aSlider,bSlider,cSlider].forEach(el => {
+    el.addEventListener('input', draw);
+  });
+
+  resetBtn.addEventListener('click', () => {
+    setValues(1,0,0);
+  });
+
+  sampleBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const [a,b,c] = btn.dataset.sample.split(',').map(Number);
+      setValues(a,b,c);
+    });
+  });
+
+  window.addEventListener('resize', resizeCanvas);
+
+  resizeCanvas();
+})();
+</script>
+</body>
+</html>
