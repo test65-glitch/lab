@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>영재 탐구 산출물 아카이브</title>
+  <style>
+    :root{
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --text: #18212f;
+      --sub: #4f5d73;
+      --line: #d9e2f0;
+      --accent: #2f6fed;
+      --accent-dark: #1e56c2;
+      --soft: #eef4ff;
+      --shadow: 0 14px 32px rgba(24, 33, 47, 0.08);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(180deg, #f7faff 0%, #eef3fb 100%);
+      color: var(--text);
+      font-family: "Malgun Gothic", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      line-height: 1.65;
+    }
+
+    body {
+      min-height: 100vh;
+    }
+
+    .wrap {
+      width: min(1100px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 40px 0 56px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #ffffff 0%, #f3f7ff 100%);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      padding: 34px 28px;
+      margin-bottom: 28px;
+    }
+
+    .hero .eyebrow {
+      display: inline-block;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--accent-dark);
+      background: var(--soft);
+      border: 1px solid #d8e6ff;
+      border-radius: 999px;
+      padding: 8px 14px;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+    }
+
+    .hero p {
+      margin: 0;
+      font-size: clamp(1.05rem, 2.5vw, 1.3rem);
+      color: var(--sub);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 24px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      min-height: 100%;
+    }
+
+    .card-head {
+      margin-bottom: 18px;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--accent-dark);
+      background: #edf3ff;
+      border: 1px solid #d8e6ff;
+      border-radius: 999px;
+      padding: 7px 12px;
+      margin-bottom: 12px;
+    }
+
+    .title {
+      margin: 0;
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
+
+    .sections {
+      display: grid;
+      gap: 14px;
+      margin: 6px 0 24px;
+    }
+
+    .section {
+      background: #fbfcff;
+      border: 1px solid #e4ebf5;
+      border-radius: 16px;
+      padding: 15px 16px;
+    }
+
+    .section strong {
+      display: block;
+      font-size: 1rem;
+      margin-bottom: 6px;
+      color: var(--accent-dark);
+    }
+
+    .section p {
+      margin: 0;
+      font-size: 1.02rem;
+      color: var(--text);
+    }
+
+    .btn {
+      margin-top: auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 54px;
+      padding: 14px 18px;
+      border-radius: 16px;
+      background: var(--accent);
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 1.05rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      transition: transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+      box-shadow: 0 10px 20px rgba(47, 111, 237, 0.22);
+    }
+
+    .btn:hover,
+    .btn:focus-visible {
+      background: var(--accent-dark);
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    .footer-note {
+      margin-top: 24px;
+      text-align: center;
+      font-size: 0.98rem;
+      color: var(--sub);
+    }
+
+    @media (max-width: 640px) {
+      .wrap {
+        width: min(100% - 20px, 1100px);
+        padding: 20px 0 32px;
+      }
+
+      .hero {
+        padding: 24px 18px;
+        border-radius: 22px;
+      }
+
+      .card {
+        padding: 18px;
+        border-radius: 20px;
+      }
+
+      .section {
+        padding: 13px 14px;
+      }
+
+      .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero" aria-label="소개">
+      <div class="eyebrow">영재 탐구 산출물 아카이브</div>
+      <h1>수학 탐구 산출물 대문</h1>
+      <p>탐구 질문에서 시작해 사고의 흔적을 거쳐 열린 결론으로 이어지는 과정을 카드로 정리했습니다. 아래 버튼을 눌러 각 산출물을 바로 열어볼 수 있습니다.</p>
+    </section>
+
+    <section class="grid" aria-label="산출물 목록">
+      <article class="card">
+        <div class="card-head">
+          <div class="badge">산출물 1</div>
+          <h2 class="title">이차함수 그래프</h2>
+        </div>
+
+        <div class="sections">
+          <div class="section">
+            <strong>탐구 질문</strong>
+            <p>이차함수의 식에서 계수가 바뀌면 그래프의 모양, 방향, 꼭짓점의 위치는 어떻게 달라질까?</p>
+          </div>
+
+          <div class="section">
+            <strong>사고 흔적</strong>
+            <p>기본형 그래프를 먼저 떠올린 뒤, a, b, c 값을 하나씩 바꾸어 보며 그래프가 넓어지거나 좁아지는 모습, 위아래 방향, 평행이동의 변화를 비교해 보았다.</p>
+          </div>
+
+          <div class="section">
+            <strong>열린 결론</strong>
+            <p>이차함수 그래프는 단순히 하나의 포물선이 아니라 식의 각 항이 맡은 역할을 읽어 내는 과정으로 볼 수 있으며, 더 복잡한 함수의 변화도 비슷한 관점으로 확장해 탐구할 수 있다.</p>
+          </div>
+        </div>
+
+        <a href="test.html" target="_blank" rel="noopener" class="btn">산출물 열기</a>
+      </article>
+    </section>
+
+    <div class="footer-note">필요한 문장은 교사가 바로 수정할 수 있도록 자연스럽고 간단한 예시로 작성되었습니다.</div>
+  </main>
+</body>
+</html>
